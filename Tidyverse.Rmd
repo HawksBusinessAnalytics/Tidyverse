@@ -1,0 +1,240 @@
+---
+title: "Business Analytics Club Tidyverse Introduction"
+author: "Matthew Buddensick"
+date: "9/16/2020"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+R Markdown file introducing the tidyverse for the SUNY New Paltz Business Analytics Club. This is just an introduction to some of the packages included in the tidyverse, for more in depth details and extra packages that compliment the tidyverse go [here](https://www.tidyverse.org/packages/).
+
+
+```{r Load packages, include=FALSE}
+pacman::p_load(tidyverse)
+theme_set(theme_classic())
+```
+
+
+## The Data
+
+The data we will be using for a majority of this notebook is the **diamonds** data set which can be found on [kaggle](https://www.kaggle.com/shivam2503/diamonds). 
+
+```{r Load Data, warning=FALSE}
+diamonds <- read_csv("diamonds.csv")
+```
+ 
+Here we used the **read_csv** function from the readr package in the tidyverse, which is faster than base R's **read.csv** function, and also gives more information, such as how the variables were imported.
+
+
+```{r Summary of data}
+diamonds %>% 
+    glimpse()
+```
+
+The **glimpse** function is very similar to base R's **str** function. We can see that there are `r nrow(diamonds)` rows in the data set and `r ncol(diamonds)` columns. If we want to see just the number of rows and columns without any of the data we could use the **dim** function, which takes a single object as an input. The **%>%** symbol is called the *pipe operator*. This takes the output of one statement and passes it onto the next statement. In this chunk of code you can read it as "I have the diamonds data, then I use the glimpse function to look at it."
+
+## Dplyr
+
+Dplyr is one of the most important packages included in the tidyverse. It provides functions, or verbs, that allow you to easily manipulate data. In this section we will go over the select, filter, arrange, mutate and summarize verbs. To download a cheat sheet for common dplyr functions click [here](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf).
+
+### Select 
+
+The **select** verb allows you to select only certain columns from the data set. It is not very useful with the data we are using ((there are only `r ncol(diamonds)`, but can be very useful when working with data with 100s of columns.
+
+```{r}
+# Select just price, caret, cut, color and clarity
+```
+
+```{r}
+# Select that start with c
+```
+
+```{r}
+# Select columns that end with e
+```
+
+```{r}
+# Select columns that contain ar
+```
+
+```{r}
+# Select columns from carat to price
+```
+
+```{r}
+# Remove the X1 column from the dataset, it is just an idex and is not needed, save as diamonds
+```
+
+### Filter
+
+The **filter** verb allows you to subset observations.
+
+```{r}
+# Filter for price over $500
+```
+
+```{r}
+# Filter for only Good and Very Good cut diamonds
+```
+
+### Arrange
+
+The **Arrange** verb allows you to change the order of rows in the data set.
+
+```{r}
+# Arrange the data so that it is descending by price
+```
+
+```{r}
+# Arrange the data so that is in increasing by price
+```
+
+### Mutate
+
+The **mutate** verb allows you to add new columns to your data set, or overwrite existing columns.
+
+```{r}
+# First use the select verb to drop the depth column and save as diamonds_mutate
+```
+
+```{r}
+# Readd the depth column, it is calculated as z / mean(x, y), save as diamonds_original
+```
+
+```{r}
+# If the column is a character column, change it to a factor, save as diamonds_factor
+```
+
+```{r}
+# Use the head command on the cut column
+```
+
+Since we used the **mutate_if** function to turn all character variables to factor variables, the cut variable is not ordered as it should be. We can see the different levels, but there is no order (Ideal should be the greatest). We will use the cut variable to create an ordered factor later.
+
+```{r}
+# Make a new column (price_factor) that is a factor, and is equal to 1 if the price of a diamonds is greater than the median price, and 0 if it is lower, save the result to diamonds
+```
+
+```{r}
+# Use the table function on the price_factor column
+```
+
+### Summarize
+
+The **summarize** verb allows you to get summary statistics based off of your data. Is it commonly used with the **group_by** function, which is also apart of dplyr.
+
+```{r}
+# Generate mean of price
+```
+
+```{r}
+# Generate mean of price by cut
+```
+
+```{r}
+# Generate mean of price for each cut and clarity
+```
+
+## Stringr
+Stringr is a package in the tidyverse and is built on top of the stringi package. It plays a big role in data cleaning tasks, and makes working with strings easy. To download a cheat sheet on common stringr functions, click [here](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf).
+
+For these examples we will be using a vector of premade strings called **strings**, and not the diamonds data set.
+
+```{r}
+string_vector <- c("suny", "new paltz", "analytics", "club")
+```
+
+```{r}
+# Make all values of string_vector entirely lowercase
+```
+
+```{r}
+# Make all values of string_vector entirely uppercase
+```
+
+```{r}
+# Split the values in string_vector on a space (notice the output)
+```
+
+```{r}
+# What is the length of each string in string_vector?
+```
+
+```{r}
+# Replace analytics in string_vector with "business analytics"
+```
+
+Stringr also allows us to use regular expressions, which allows you to define and search for a specific pattern. You can find more information on regular expressions in the cheat sheet for stringr above, or by downloading the [regular expression cheatsheet](http://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf). Here we will do one very simple example of a regular expression without any of the fancy, more complicated syntax.
+
+```{r}
+# Detect strings with a "u" in them
+```
+
+## Forecats
+Forecats is a package in the tidyverse that helps us deal with categorical variables. Categorical variables have a fixed and known set of possible values, this could be something like sex or education level. This is very useful when doing an analysis, because you will most likely not want to work with characters or strings. You can download a cheat sheet of common forecats functions [here](https://github.com/rstudio/cheatsheets/raw/master/factors.pdf). We will be working with only the cut column of the diamonds data in these examples.
+
+```{r}
+# Convert the cut column into a factor variable and look at the levels, do not save the output
+```
+
+We want to show the order of the cut variable (Fair -> Ideal) when we create it by making it an ordered factor.
+
+```{r}
+# Create a ordered factor of the cut variable and save it to a vairable called cut_factor
+```
+
+```{r}
+# Look at the levels of the cut variable using the head() function
+```
+
+```{r}
+# From cut in the original dataset, use fct_lump to create a factor variable with n = 2, save as lumped_cut and print the first couple of rows using head()
+```
+
+Note that since cut is an ordered factor, it would not be a good idea to lump them together. You will lose valuable information about the different cuts of diamonds. Use **fct_lump** when you have small groups.
+
+```{r}
+# Recode the levels in cut_factor so that everything is the same except Ideal becomes best, save as cut_recode and use head() to look at it
+```
+
+## Ggplot2
+
+Ggplot2 allows you to create decorative graphs in R. It is one of the most popular packages for creating data visualizations. You can find a cheat sheet for common ggplot2 graphs and functions [here](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf). The cheat sheet also provides what types of graphs you can use when working with different variables, which comes in handy in case you forget.
+
+```{r}
+# Create a scatterplot of carat and price
+```
+
+A lot of the points in the graph seem to be overlapping, we can fix this by using geom_jitter instead of geom_point and also decrease the visibility of each point slightly by decreasing the alpha. We can also change the axis names and add a simple title.
+
+```{r}
+# Use geom_jitter to create a scatterplot and add new axis labels and a title, use alpha = .2
+```
+
+```{r}
+# Create a bar graph of cut and price
+```
+
+This plot is okay, but with ggplot we can create much nicer looking graphs. Lets flip the coordinates, give the graph some color, change the axis names and give the graph a title.
+
+```{r}
+# Create the graph above but add color, new axis names, and a title
+```
+
+This graph is good, but lets just say we want the lowest price to be on the top of the graph for some reason. We can do this using forecats **fct_rev** function.
+
+```{r}
+# Make the same plot but with the order of cut from lowest to highest
+```
+
+## Conclusion
+
+In this notebook we want through a couple of the main packages and functions used in the tidyverse package. However, there are still other packages we did not look at in the tidyverse, such as [tidyr](https://tidyr.tidyverse.org/), and other packages that work well with the tidyverse. Some of these packages are [lubridate](https://lubridate.tidyverse.org/) for working with dates and times, and [tidymodels](https://www.tidymodels.org/) for modeling data.
